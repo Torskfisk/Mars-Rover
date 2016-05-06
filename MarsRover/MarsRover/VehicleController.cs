@@ -10,15 +10,15 @@ namespace MarsRover
     {
         // set the starting positions of the vehicles. We could do this from the outside, via a public
         // constructor or method, but keep it simple for now.
-        public static Vehicle[] _vehicles =  {  new Vehicle {X = 1, Y=2,Orientation=Direction.N},
-                                                new Vehicle {X = 3, Y=3,Orientation=Direction.E},
-                                               // new Vehicle {X = 5, Y=5,Orientation=Direction.N}
+        private static Vehicle[] _vehicles =  {  new Vehicle {X = 1, Y=2,Orientation=Direction.N}, // one of the test cases provided with the instructions
+                                                new Vehicle {X = 3, Y=3,Orientation=Direction.E},  // one of the test cases provided with the instructions
+                                                new Vehicle {X = 5, Y=5,Orientation=Direction.N}
                                               };
 
-        public int maxXPos { get; set; }
+        public int maxXPos {get; set;}
         public int maxYPos { get; set; }
 
-
+        
         // return true if we can find one vehicle in the master list, that matches the input vehicle.
         // otherwise false.
         public bool FindVehicle(Vehicle vIn)
@@ -61,7 +61,7 @@ namespace MarsRover
                            where v.X == X && v.Y == Y
                            select v;
 
-            if (matching != null)
+            if (matching != null )
             {
                 result = matching.ToList().FirstOrDefault();
             }
@@ -72,7 +72,7 @@ namespace MarsRover
         public bool UpdateVehicle(int Xold, int Yold, Direction Dold, Vehicle Vnew)
         {
             bool result = false;
-
+            
             var matching = from v in _vehicles
                            where v.X == Xold && v.Y == Yold && v.Orientation == Dold
                            select v;
@@ -85,7 +85,7 @@ namespace MarsRover
                 vUpdate.Orientation = Vnew.Orientation;
                 result = true;
             }
-
+            
             return result;
         }
 
@@ -110,6 +110,8 @@ namespace MarsRover
             bool confirmMove = true;
             int startingX = v.X;
             int startingY = v.Y;
+            Direction startingDirection = v.Orientation;
+            Vehicle startingVehicle = new Vehicle{ X=startingX, Y = startingY, Orientation = startingDirection};
 
             if (v != null)
             {
@@ -123,7 +125,7 @@ namespace MarsRover
 
                 foreach (char c in cmd)
                 {
-                    if (c == 'R' || c == 'L')
+                    if(c == 'R' || c == 'L')
                     {
                         dummy.Rotate(c);
                     }
@@ -136,7 +138,7 @@ namespace MarsRover
                         if (FindVehicleAtPosition(dummy.X, dummy.Y))
                         {
                             // the vehicle is allowed to cross its own starting position
-                            if (dummy.X != startingX && dummy.Y != startingY)
+                            if (dummy.X != startingX || dummy.Y != startingY)
                             {
                                 confirmMove = false;
                                 break;
@@ -149,9 +151,10 @@ namespace MarsRover
                         }
 
                     }
-
+                   
                 }
 
+                result = startingVehicle.DisplayPosition();
                 if (true == confirmMove)
                 {
                     if (true == UpdateVehicle(v.X, v.Y, v.Orientation, dummy))

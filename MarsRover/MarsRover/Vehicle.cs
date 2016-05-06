@@ -44,6 +44,7 @@ namespace MarsRover
             }
         }
 
+
         public void Rotate(char dir)
         {
             if (dir == 'R')
